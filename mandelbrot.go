@@ -44,6 +44,7 @@ func init() {
 }
 
 func main() {
+    runtime.GOMAXPROCS(8)
     fmt.Println(runtime.NumCPU())
     done := make(chan struct{})
     ticker := time.NewTicker(time.Millisecond * 100)
