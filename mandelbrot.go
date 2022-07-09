@@ -25,6 +25,7 @@ var (
     maxIteration    int
     escapeRadius    float64
     outputFile      string
+    cores           int
 )
 
 var waitGroup sync.WaitGroup
@@ -40,12 +41,14 @@ func init() {
     flag.IntVar(&imageSmoothness, "smoothness", 8, "The rendered mandelbrot set smoothness. For a more detailded and clear image use higher numbers. For 4xAA (AA = antialiasing) use -smoothness 4")
     flag.StringVar(&colorPalette, "palette", "Hippi", "Hippi | Plan9 | AfternoonBlue | SummerBeach | Biochimist | Fiesta")
     flag.StringVar(&outputFile, "file", "mandelbrot.png", "The rendered mandelbrot image filname")
+    flag.IntVar(&cores, "cores", runtime.NumCPU(), "Number of cores utilized")
     flag.Parse()
 }
 
 func main() {
-    runtime.GOMAXPROCS(8)
-    fmt.Println(runtime.NumCPU())
+    // Set the number of cores needed
+    runtime.GOMAXPROCS(cores)
+
     done := make(chan struct{})
     ticker := time.NewTicker(time.Millisecond * 100)
 
@@ -76,6 +79,10 @@ func main() {
 //export GoMain
 func GoMain() {
     fmt.Println(runtime.NumCPU())
+
+    // Set the number of cores needed
+    runtime.GOMAXPROCS(cores)
+    
     done := make(chan struct{})
     ticker := time.NewTicker(time.Millisecond * 100)
 
